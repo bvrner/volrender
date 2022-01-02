@@ -1,0 +1,8 @@
+[requires]
+opengl/system
+sfml/2.5.1
+glew/2.2.0
+mathter/1.0.0
+
+[generators]
+cmake
