@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 
 #include <iostream>
-#include <utils.hpp>
+#include <util/utils.hpp>
 namespace ogl {
 enum class texture_type { tex2d = GL_TEXTURE_2D, tex3d = GL_TEXTURE_3D };
 

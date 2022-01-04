@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <ogl/texture.hpp>
-#include <utils.hpp>
+#include <util/utils.hpp>
 #include <vector>
 
 namespace ogl {

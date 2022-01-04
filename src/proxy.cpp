@@ -1,4 +1,4 @@
-#include <proxy.hpp>
+#include <core/proxy.hpp>
 
 namespace {
 // the vertices of a two unit cube

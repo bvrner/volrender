@@ -1,18 +1,12 @@
 #include <GL/glew.h>
 
-#include <Mathter/IoStream.hpp>
-#include <Mathter/Matrix.hpp>
 #include <SFML/Window.hpp>
-#include <arcball.hpp>
+#include <core/proxy.hpp>
+#include <core/renderer.hpp>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <ogl/buffers.hpp>
-#include <ogl/framebuffer.hpp>
-#include <ogl/shader.hpp>
-#include <ogl/texture.hpp>
-#include <proxy.hpp>
-#include <renderer.hpp>
+#include <util/arcball.hpp>
 
 ogl::texture3D load_data() {
   namespace fs = std::filesystem;
@@ -30,17 +24,14 @@ ogl::texture3D load_data() {
 void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
                       GLsizei length, GLchar const* message,
                       void const* user_param);
-using mat4x4 =
-    mathter::Matrix<float, 4, 4, mathter::eMatrixOrder::PRECEDE_VECTOR,
-                    mathter::eMatrixLayout::COLUMN_MAJOR, true>;
-using vec3 = mathter::Vector<float, 3, true>;
 
 int main() {
   sf::ContextSettings settings;
   settings.majorVersion = 3;
   settings.minorVersion = 3;
   settings.attributeFlags = sf::ContextSettings::Attribute::Core;
-  sf::Window win(sf::VideoMode(800, 600), "Test", sf::Style::Default, settings);
+  sf::Window win(sf::VideoMode(800, 600), "Volume", sf::Style::Default,
+                 settings);
   win.setActive();
   glewInit();
   glDebugMessageCallback(message_callback, nullptr);
@@ -66,13 +57,14 @@ int main() {
         glViewport(0, 0, event.size.width, event.size.height);
       } else if (event.type == sf::Event::MouseButtonPressed &&
                  event.mouseButton.button == sf::Mouse::Button::Left) {
-        arc.click(vec2(event.mouseButton.x, event.mouseButton.y));
+        arc.click(math::vec2(event.mouseButton.x, event.mouseButton.y));
       } else if (event.type == sf::Event::MouseButtonReleased) {
         arc.finish();
       } else if (event.type == sf::Event::MouseMoved && arc.is_on_) {
-        auto rotation = (arc.drag(vec2(event.mouseMove.x, event.mouseMove.y)));
-        mat4x4 scale = mathter::Scale(0.5f, 0.5f, 0.5f);
-        mat4x4 rot = mat4x4(rotation);
+        auto rotation =
+            (arc.drag(math::vec2(event.mouseMove.x, event.mouseMove.y)));
+        math::mat4x4 scale = mathter::Scale(0.5f, 0.5f, 0.5f);
+        math::mat4x4 rot = math::mat4x4(rotation);
         renderer.model() = scale * rot;
       }
     }

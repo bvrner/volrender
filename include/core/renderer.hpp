@@ -1,11 +1,11 @@
 #pragma once
 
 #include <array>
-#include <matdef.hpp>
+#include <core/proxy.hpp>
 #include <ogl/framebuffer.hpp>
 #include <ogl/shader.hpp>
 #include <ogl/texture.hpp>
-#include <proxy.hpp>
+#include <util/matdef.hpp>
 
 namespace core {
 class renderer {

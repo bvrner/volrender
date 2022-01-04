@@ -5,8 +5,7 @@
 #include <Mathter/Vector.hpp>
 
 namespace math {
-template <bool Packed = false>
-using quat = mathter::Quaternion<float, Packed>;
+using quat = mathter::Quaternion<float, false>;
 using mat3x3 =
     mathter::Matrix<float, 3, 3, mathter::eMatrixOrder::PRECEDE_VECTOR,
                     mathter::eMatrixLayout::COLUMN_MAJOR, true>;

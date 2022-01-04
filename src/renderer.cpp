@@ -1,4 +1,4 @@
-#include <renderer.hpp>
+#include <core/renderer.hpp>
 
 // shader sources, no need to load them dynamically from files
 namespace {
