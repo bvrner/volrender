@@ -5,28 +5,28 @@
 #include <utils.hpp>
 #include <vector>
 
-namespace rendering {
+namespace ogl {
 enum class buffer_type {
   vertex = GL_ARRAY_BUFFER,
   element = GL_ELEMENT_ARRAY_BUFFER,
   uniform = GL_UNIFORM_BUFFER
 };
 
-template <buffer_type type>
+template <typename T, buffer_type type>
 struct gl_buffer : utils::bf_base {
-  template <typename T>
-  gl_buffer(T *data, size_t len) {
+  gl_buffer(const T *data, size_t len) {
     GLuint id = 0;
     glGenBuffers(1, &id);
     glBindBuffer(static_cast<GLenum>(type), id);
     auto size = len * sizeof(T);
-    glBufferStorage(static_cast<GLenum>(type), size, data, GL_DYNAMIC_STORAGE_BIT);
+    glBufferStorage(static_cast<GLenum>(type), size, data,
+                    GL_DYNAMIC_STORAGE_BIT);
     glBindBuffer(static_cast<GLenum>(type), 0);
 
     id_ = id;
   }
-  template <typename T>
-  void buffer_data(T *data, size_t len) {
+
+  void buffer_data(const T *data, size_t len) {
     bind();
     glBufferSubData(static_cast<GLenum>(type), 0, sizeof(T) * len, data);
     unbind();
@@ -35,15 +35,17 @@ struct gl_buffer : utils::bf_base {
   void unbind() const { glBindBuffer(static_cast<GLenum>(type), 0); }
 };
 
-struct uniform_buffer : gl_buffer<buffer_type::uniform> {
-  using gl_buffer::gl_buffer;
+template <typename T>
+struct uniform_buffer : gl_buffer<T, buffer_type::uniform> {
+  using gl_buffer<T, buffer_type::uniform>::gl_buffer;
   void bind_base(GLuint index) const {
-    glBindBufferBase(GL_UNIFORM_BUFFER, index, id_);
+    glBindBufferBase(GL_UNIFORM_BUFFER, index, this->id_);
   }
 };
-
-using vertex_buffer = gl_buffer<buffer_type::vertex>;
-using element_buffer = gl_buffer<buffer_type::element>;
+template <typename T>
+using vertex_buffer = gl_buffer<T, buffer_type::vertex>;
+template <typename T>
+using element_buffer = gl_buffer<T, buffer_type::element>;
 
 struct buffer_layout {
   struct element {
@@ -74,7 +76,9 @@ class vertex_array : utils::va_base {
     id_ = id;
   }
   // configures this VAO with a determined buffer and layout
-  void config_buffer(const vertex_buffer &buffer, const buffer_layout &layout) {
+  template <typename T>
+  void config_buffer(const vertex_buffer<T> &buffer,
+                     const buffer_layout &layout) {
     bind();
     buffer.bind();
     int offset = 0;
@@ -96,9 +100,9 @@ class vertex_array : utils::va_base {
     glVertexAttribPointer(index, elem.count, elem.type, GL_FALSE, stride,
                           (GLvoid *)offset);
   }
-  void bind() { glBindVertexArray(id_); }
+  void bind() const { glBindVertexArray(id_); }
 
-  void unbind() { glBindVertexArray(0); }
+  void unbind() const { glBindVertexArray(0); }
 };
 
-}  // namespace rendering
+}  // namespace ogl
