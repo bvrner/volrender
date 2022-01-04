@@ -42,7 +42,6 @@ class gl_object {
   gl_object() : id_(0){};
   gl_object(gl_object &) = delete;
   gl_object(gl_object &&other) {
-    deleter(id_);
     id_ = other.id_;
     other.id_ = 0;
   }

@@ -74,9 +74,19 @@ class shader_program {
   }
 
  public:
-  shader_program() = delete;
+  shader_program() : id_(0) {}
   shader_program(shader_program &) = delete;
   shader_program(shader_program &&other) : id_(other.id_) { other.id_ = 0; }
+
+  shader_program &operator=(shader_program &&other) {
+    if (this == &other) return *this;
+
+    glDeleteProgram(id_);
+    id_ = other.id_;
+    other.id_ = 0;
+
+    return *this;
+  }
 
   shader_program(const shader<shader_type::vertex> &v_shader,
                  const shader<shader_type::fragment> &f_shader) {
@@ -86,9 +96,9 @@ class shader_program {
 
     glLinkProgram(id_);
     check_program_status(id_, GL_LINK_STATUS);
+    // temporary hack to prevent the validation from complaining about the
+    // samplers default values being the same
     set_sampler("volume", 2);
-    set_sampler("front", 0);
-    set_sampler("back", 1);
     glValidateProgram(id_);
     check_program_status(id_, GL_VALIDATE_STATUS);
 

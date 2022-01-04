@@ -18,7 +18,7 @@ struct texture : utils::tx_base {
     glTextureParameteri(id_, pname, param);
   }
 
-  void bind(int slot) {
+  void bind(int slot) const {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(static_cast<GLenum>(type), id_);
   }
